@@ -1,0 +1,285 @@
++++++++++++++++++++++++++++++++++++++++++++++++++
+++ 6.034 Spring
+++ Breakout Bot Exercise 1 -- Code Spelunking
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Changelog:
+  * 7 Feb - Changed HumanBot to HumanBtBot
+  * 7 Feb - Change the move you are to encode to be also valid by game
+            rules and gave an example of the before and after board state.
+
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+The first project in 6.034 is to implement an AI Game bot that can play the 
+game breakout. You can find out more about the project and Breakout at the 
+project web page:
+
+   1. Login to the online tutor at 
+      http://courses.csail.mit.edu/6.034s/home.html
+
+   2. Click on "Choose Project"
+
+   3. Click on "1"
+
+This exercise will get you acquainted with some of the software infrastructure 
+that we'll be using to implement our AI Bots. This is a pass/fail exercise. 
+Your task is to hunt around the project code and explore the three main 
+components of the game:
+
+  * Bots (the players of the game)
+  * The Board (where the game takes place)
+  * Moves (actions the bot can take)
+
+
+Get the Code
+============
+
+1. Download the file project1.tar.gz from the project page and unpack it 
+(tar -zxvf project1.tar.gz)
+
+Bots
+====
+
+1. Find the BtBot class in bt_game.py
+   a. What are the methods on it?
+__init__, get_my_sym, is_valid_move, move, assign_move
+
+
+   b. What does the is_valid_mode method do?
+makes sure that the move of the bot itself are not outside the boundaries of the board and the move is diagonal or straight up ahead (a legal move)
+
+   c. Why does the move method return an exception?
+because it has not been implemented, it is abstract
+
+
+2. Find the HumanBtBot class. What does this class do?
+it is a subclass of BtBot that allows the user to control the moves made
+
+
+3. Find the BtRandomBot class. What do you think this class does?
+it moves the bot in completely random directions
+
+
+4. Say you want to program your own bot, one smarter than the BtRandomBot. 
+   Where would you implement your custom AI?
+I would create a new class in bt_game and implement the AI in the move method
+
+
+5. Looking at the method signature for the HumanBtBot and the BtRandomBot, 
+   what objects will your AI have to use as inputs?
+BtBot 
+
+
+The Board
+=========
+
+
+1. Find the BtBoard class.
+
+
+
+   a. What parameters can a board take (look at the constructor)?
+rows, cols
+
+
+   b. What does this line of code do in the BtBoard constructor?
+  mat = [[ʻ ʻ for col in range(cols)] for row in range(rows)]
+creates an empty matrix of dimension: rows *cols
+ 
+
+   c. How is an empty piece represented in board.mat?
+''
+
+   d. What does the new_game method do?
+fills up the lowest two rows with symbols of the players
+
+
+   e. What are sym1 and sym2 arguments to new_game?
+   x and o, the symbols of the players
+   
+   
+   f. How is one of Player 1ʼs pieces represented in board.mat?
+my_sym in board.mat[r][c]
+
+
+Moves
+=====
+
+Moves are implemented as a 2x2 matrix. Or a list of 2 coordinates, however you
+want to think about it
+
+  move = [
+   [ from_row, from_col ],
+   [ to_row, to_col]
+  ]
+
+
+1. How would you encode the move of a piece from 8,1 to 7.1, depicted below ?
+
+    _ _ _ _ _ _ _ _ _
+  9| x x x x x x x x x |
+  8| x x x x x x x x x |
+  7|                   |
+  6|                   |
+  5|                   |
+  4|                   |
+  3|                   |
+  2|       o           |
+  1| o o o o   o o o o |
+  0| o o o o o o o o o |
+    0 1 2 3 4 5 6 7 8
+
+     _ _ _ _ _ _ _ _ _
+  9| x x x x x x x x x |
+  8| x   x x x x x x x |
+  7|   x               |
+  6|                   |
+  5|                   |
+  4|                   |
+  3|                   |
+  2|       o           |
+  1| o o o o   o o o o |
+  0| o o o o o o o o o |
+    0 1 2 3 4 5 6 7 8
+
+
+move = [[8,1], [7,1]]
+
+
+2. Going back to the board class, what would move(self,move) set 
+   self.mat[1][1] if you passed it the move from the last question?
+	self.mat[1][1] would be unchanged
+
+
+3. What would it set self.mat[1][2]?
+	This would also be unchanged
+
+
+
+4. What would happen if you pass it a move that references rows and 
+   columns outside the bounds of the playing board?
+	It would cause an out-of-bounds error and display the message: "invalid move"
+
+
+Implementing a Simple Bot
+=========================
+
+Now you're ready to implement a simple game playing bot!
+
+1) Go study HumanBtBot and BtRandomBot in the bt_game.py file, then 
+   create your own bot in a file named breakout1.py
+
+Here's the template class to get you started:
+
+class BreakoutBot1(BtBot):
+    def __init__(self, first_player, my_sym, opp_sym):
+        BtBot.__init__(self, first_player, my_sym, opp_sym)
+
+    def move(self, move, board):
+        // AI-Complete Implementation Here
+
+Let's look at the member variables above:
+  * first_player is a boolean that tells you if you're the first player
+  * my_sym tells you what board symbol is yours
+  * opp_sym tells you the board symbol of the opposing player
+
+
+Now take a look at BtRandomBot. Here's a tricky piece of code that will 
+help you a lot:
+
+    mm = (self._first_player \
+       and [[ (1,-1), (1,0), (1,1) ]] \
+       or [[ (-1,-1), (-1,0), (-1,1) ]])[0]
+
+Here, mm represents the valid moves for any of your pieces. Depending if 
+you are player 1 or player 2, you will be moving up or down the board. 
+
+2) In a python shell, run this piece of code
+
+    mm = (True \
+       and [[ (1,-1), (1,0), (1,1) ]] \
+       or [[ (-1,-1), (-1,0), (-1,1) ]])[0]
+   print mm
+
+What does mm equal when you are the first player?
+
+[(1,-1), (1,0), (1,1)]
+
+What does mm equal when you are the second player?
+
+[(-1,-1), (-1,0), (-1,1) ]
+
+Are these absolute coordinates or relative coordinates?
+relative coordinates
+
+3) OK. Now we'll make the bot. Here's the pseudocode we'd like you to implement.
+This bot makes truly random moves. It randomly picks a spot on the board until 
+it finds one with your piece on it. Then it randomly picks a valid move. If 
+that move is possible given the game state, it makes the move. If the move 
+is not possible, it starts over completely.
+
+Feel free to implement this strategy however you like. If you need one, here
+is a pseudocode template you can follow:
+
+A function to randomly select a position on the board with your piece on it:
+
+   def spot_with_my_piece:
+      spot = pick a random spot on the board
+      while (this spot does not contain your piece):
+         spot = pick a random spot on the board
+      return spot
+
+A function to randomly select a spot AND a move:
+Note, there is a helper function to help you check if a move is valid. 
+
+   def pick_spot_and_move:
+      valid_moves = list of valid moves (see step 2 above, with the mm variable)
+      spot = spot_with_my_piece()
+      move = pick a random move
+      while (this spot + move combination is not valid)
+        spot = spot_with_my_piece()
+        move = pick a random move()
+      return (spot,move)
+
+And finally, the move function:
+
+     def move(self, move, board):
+         (spot, mymove) = pick_spot_and_move
+         set the move variable (absolute coordinates)
+           using the spot variable (absolute coordinates)
+           and the mymove variable (relative coordinates)
+
+You can use the random bot implementation in the provided code as a guide, 
+but note that the decision making process described above is simpler 
+than BtRandomBot.
+
+
+4) Run the bot
+
+You can try playing with your bot using the following directions:
+
+   1) Import breakout1 in bt_play.py
+   2) modify line 26 of bt_play.py to read 
+
+     bot1 = BreakoutBot1( True, symbols[0], symbols[1] )
+  
+   3) on the command line, run 
+
+     python bt_play.py
+
+Submission Instructions
+=======================
+
+Please submit two files:
+  * This textfile
+  * Your simple bot file
+
+------ IMPORTANT IMPORTANT IMPORTANT -------
+These files *MUST* be named breakout1.txt and breakout1.py
+------ IMPORTANT IMPORTANT IMPORTANT -------
+
+Submit the files, one at a time, using the form at the bottom of 
+the project web page.
+
+

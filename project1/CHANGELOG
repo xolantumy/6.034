@@ -1,0 +1,16 @@
+20100407b
+ * bt_time_machine.py: fix bug on machines which slow down transiently
+
+20100407
+ * bt_time_machine.py: "measures" cpu speed
+ * bt_play.py: timeout now set based on "calibrated" cpu speed; generally more time now
+ * bt_smart_bot.py: redundant main function removed
+ * bt_dumb_bot.py: redundant main function removed
+
+20100316
+ * bt_game.py, by_client.py: they now print tracebacks for exceptions
+ * bt_server.py: add (create dir ../logs then run python bt_server <port>)
+
+20100309
+ * bt_play.py: fixed syntax error for letting humans play
+ * bt_game.py: fixed time reporting bug (no impact on time enforcement)
